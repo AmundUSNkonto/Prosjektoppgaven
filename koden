@@ -1,0 +1,158 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Feb  8 20:20:43 2026
+
+@author: rg425
+"""
+
+# Del a -----------------------------
+
+import pandas as pd
+import numpy as np
+data = pd.read_excel(r"C:\Users\rg425\Desktop\Python\Prosjektoppgaven\support_uke_24.xlsx")
+print(data)
+
+
+u_dag = np.array(data["Ukedag"])
+
+kl_slett = np.array(data["Klokkeslett"])
+
+varighet = np.array(data["Varighet"])
+
+score = np.array(data["Tilfredshet"])
+
+#%%
+# Del b --------------------------
+
+mandag = np.sum(u_dag == "Mandag")
+tirsdag = np.sum(u_dag == "Tirsdag")
+onsdag = np.sum(u_dag == "Onsdag")
+torsdag = np.sum(u_dag == "Torsdag")
+fredag = np.sum(u_dag == "Fredag")
+
+import matplotlib.pyplot as plt
+
+#Lager liste med navn på ukedagene til x-aksen i søylediagram
+ukedag = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag"]
+#Lager liste med antall/dag hentet fra variablene med np.sum fra oven
+Antall_ukedag = [mandag, tirsdag, onsdag, torsdag, fredag]
+
+
+plt.bar(ukedag, Antall_ukedag)
+
+#%%
+# Del c -------------------------------------------------------------------------
+
+#Bruker den innebygde funkjsonen til Pandas .min og .max
+
+min_tid = varighet.min()
+max_tid = varighet.max()
+
+print("Den minste varigheten var:", min_tid)
+print("Den største varigheten var:", max_tid)
+
+#%%
+# Del d -------------------------
+
+import datetime as dt
+
+absolutt = pd.to_timedelta(data["Varighet"]) #Bruker Timedeltai Pandas for å kunne beregne tid som lengdeenhet
+
+tid = absolutt.mean()
+
+print("Den gjennomsnittlige samtalevarigheten var:", tid)
+
+#%%
+# Del e ----------------------------------------------------------------------
+
+tidsrom1 = np.sum(kl_slett < "10:00:00")
+
+# lager tidsrom 1_1 antallet for frem til kl. 12 slik at det kan brukes til å trekke fra antallet frem til kl. 10
+
+tidsrom1_1 = np.sum(kl_slett < "12:00:00")
+
+tidsrom2 = tidsrom1_1-tidsrom1
+
+tidsrom2_1 = np.sum(kl_slett < "14:00:00")
+
+tidsrom3 = tidsrom2_1-tidsrom2-tidsrom1
+
+tidsrom3_1 = np.sum(kl_slett < "16:00:00")
+
+tidsrom4 = tidsrom3_1-tidsrom3-tidsrom2-tidsrom1
+
+print(tidsrom1)
+print(tidsrom2)
+print(tidsrom3)
+print(tidsrom4)
+
+#Lager liste med navn på tidsrommene til x-aksen i søylediagram
+tidsrom = ["08-10", "10-12", "12-14", "14-16"]
+#Lager liste med antall/dag hentet fra variablene med np.sum fra oven
+Antall_i_tidsrom = [tidsrom1, tidsrom2, tidsrom3, tidsrom4]
+
+plt.pie(Antall_i_tidsrom, labels = tidsrom)
+
+#%%
+# del f -----------------------------------------------------------------------
+
+
+
+score = np.array(data["Tilfredshet"])
+
+def negativ(score):  
+    negativ = 0
+    
+    for i in score:
+        if i <= 6:
+            negativ += 1
+   
+    return negativ
+
+def nøytral(score):  
+    nøytral = 0 
+  
+    for i in score:
+        if i <= 8:
+            nøytral += 1
+    return nøytral
+
+def positiv(score):  
+    positiv = 0 
+  
+    for i in score:
+        if i <= 10:
+            positiv += 1
+    return positiv
+
+def total(score):
+    
+    total = 0
+    for i in score:
+        if i <= 10:
+            total += 1
+    return total
+
+
+negativ = negativ(score)
+nøytral = nøytral(score) - negativ
+positiv = positiv(score) - nøytral - negativ
+total = total(score)
+
+
+print("Antall kunder som er negative er:", negativ)
+print("Antall kunder som er nøytale er:", nøytral)
+print("Antall kunder som er positive er:", positiv)
+print("Antall kunder som har gitt tilbakemelding er:", total)
+
+
+prosentpositiv = (positiv/total)*100
+prosentpositivrundet = round(prosentpositiv,2) # Bruker "round" for å avrunde tallene til 2 desimaler
+prosentnegativ = (negativ/total)*100
+prosentnegativrundet = round(prosentnegativ,2)
+print("Prosentandel positive kunder er:", prosentpositivrundet, "%")
+print("Prosentandel negative kunder er:", prosentnegativrundet, "%")
+
+NPS = prosentpositivrundet - prosentnegativrundet
+
+print("NPS for supportavdelingen er:", NPS) 
