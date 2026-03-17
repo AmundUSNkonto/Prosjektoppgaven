@@ -9,7 +9,7 @@ Created on Sun Feb  8 20:20:43 2026
 
 import pandas as pd
 import numpy as np
-data = pd.read_excel(r"C:\Users\rg425\Desktop\Python\Prosjektoppgaven\support_uke_24.xlsx")
+data = pd.read_excel(r"support_uke_24.xlsx")
 print(data)
 
 
